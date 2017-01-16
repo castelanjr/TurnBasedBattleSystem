@@ -1,12 +1,12 @@
 package com.castelanjr.turnbasedbattlesystem.command
 
-import com.castelanjr.turnbasedbattlesystem.presentation.Presenter
+import com.castelanjr.turnbasedbattlesystem.ui.UiInteractor
 
-class CommandExecutor(val presenter: Presenter) {
+class CommandExecutor(val uiInteractor: UiInteractor) {
 
     fun executeCommand(command: Command) {
         command.execute()
-        presenter.renderCommand(command)
+        uiInteractor.renderCommand(command)
     }
 
 }

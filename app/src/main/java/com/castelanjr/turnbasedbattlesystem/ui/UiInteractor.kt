@@ -1,4 +1,4 @@
-package com.castelanjr.turnbasedbattlesystem.presentation
+package com.castelanjr.turnbasedbattlesystem.ui
 
 import com.castelanjr.turnbasedbattlesystem.char.Character
 import com.castelanjr.turnbasedbattlesystem.command.AttackCommand
@@ -10,7 +10,7 @@ import com.castelanjr.turnbasedbattlesystem.core.Engine
 import com.castelanjr.turnbasedbattlesystem.core.Result
 import org.jetbrains.anko.doAsync
 
-class Presenter(val view: View) {
+class UiInteractor(val view: View) {
 
     val engine = Engine(this)
 
@@ -57,6 +57,7 @@ class Presenter(val view: View) {
                     command.successful(), command.damage())
             is RunCommand -> checkIfRanAway(command.isSuccessful)
         }
+        engine.next()
     }
 
     private fun checkIfRanAway(success: Boolean) {

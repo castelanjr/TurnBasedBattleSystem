@@ -12,15 +12,13 @@ import com.castelanjr.turnbasedbattlesystem.command.AttackCommand
 import com.castelanjr.turnbasedbattlesystem.command.Command
 import com.castelanjr.turnbasedbattlesystem.command.DefendCommand
 import com.castelanjr.turnbasedbattlesystem.command.RunCommand
-import com.castelanjr.turnbasedbattlesystem.presentation.Presenter
-import com.castelanjr.turnbasedbattlesystem.presentation.View
 import kotlinx.android.synthetic.main.activity_battle.*
 import org.jetbrains.anko.onClick
 
 class BattleActivity : AppCompatActivity(), View {
 
     var heroesMap = mutableMapOf<Character, android.view.View>()
-    val presenter = Presenter(this)
+    val presenter = UiInteractor(this)
 
     var currentCommandActor: Character? = null
     var currentCommandTarget: Character? = null

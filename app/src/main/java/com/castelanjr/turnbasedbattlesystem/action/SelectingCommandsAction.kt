@@ -3,9 +3,9 @@ package com.castelanjr.turnbasedbattlesystem.action
 import com.castelanjr.turnbasedbattlesystem.ai.newAiCommand
 import com.castelanjr.turnbasedbattlesystem.char.Character
 import com.castelanjr.turnbasedbattlesystem.command.Command
-import com.castelanjr.turnbasedbattlesystem.presentation.Presenter
+import com.castelanjr.turnbasedbattlesystem.ui.UiInteractor
 
-class SelectingCommandsAction(val presenter: Presenter,
+class SelectingCommandsAction(val uiInteractor: UiInteractor,
                               val entities: Array<Character>): Action {
 
     val actions = mutableListOf<Command>()
@@ -15,9 +15,9 @@ class SelectingCommandsAction(val presenter: Presenter,
                 .filter { it.isAlive() }
                 .forEach {
                     if (it.isPlayer) {
-                        presenter.requestActionFromPlayer(it)
+                        uiInteractor.requestActionFromPlayer(it)
                     } else {
-                        actions.add(newAiCommand(it, aliveEntities()))
+                        actions.add(newAiCommand(it, aliveEntities().filter { it.isPlayer }))
                     }
                 }
     }

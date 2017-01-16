@@ -1,4 +1,4 @@
-package com.castelanjr.turnbasedbattlesystem.presentation
+package com.castelanjr.turnbasedbattlesystem.ui
 
 import com.castelanjr.turnbasedbattlesystem.char.Character
 import com.castelanjr.turnbasedbattlesystem.char.Skill
