@@ -27,7 +27,7 @@ class UiInteractor(val view: View) {
 
     }
 
-    private fun setupView(entities: Array<Character>) {
+    fun setupView(entities: Array<Character>) {
         val heroes = entities.filter { it.isPlayer }.toList()
         for (hero in heroes) {
             val index = heroes.indexOf(hero)
@@ -48,23 +48,22 @@ class UiInteractor(val view: View) {
         when (command) {
             is AttackCommand -> {
                 with(command) {
-                    view.showMessage("${actor.name} attacked ${target.name}! It " +
-                            if (successful()) "worked! Dealt ${damage()} points of damage" else "failed...")
                     view.renderAttack(actor, target, successful(), damage())
+                    view.showMessage("${actor.name} attacked ${target.name}! It " + if (successful()) "worked! Dealt ${damage()} points of damage" else "failed...",
+                            { engine.commandExecuted() })
                 }
             }
             is SkillCommand -> view.renderSkill(command.actor, command.target,
                     command.successful(), command.damage())
             is RunCommand -> checkIfRanAway(command.isSuccessful)
         }
-        engine.next()
     }
 
     private fun checkIfRanAway(success: Boolean) {
         if (success) {
-            view.showMessage("Ran away from the enemies!", action = { view.finalize() })
+            view.showMessage("Ran away from the enemies!", { view.finalize() })
         } else {
-            view.showMessage("Couldn't run away...")
+            view.showMessage("Couldn't run away...", { engine.commandExecuted() })
         }
     }
 
@@ -80,6 +79,7 @@ class UiInteractor(val view: View) {
 
     fun onDefendSelected() {
         view.showMessage("Defending")
+        engine.addNextCommand(view.command())
     }
 
     fun onSkillSelected(actor: Character) {
@@ -88,6 +88,7 @@ class UiInteractor(val view: View) {
 
     fun onRunSelected() {
         view.showMessage("Attempting to run")
+        engine.addNextCommand(view.command())
     }
 
     fun onTargetSelected(target: Character) {

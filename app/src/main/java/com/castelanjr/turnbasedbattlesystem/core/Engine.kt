@@ -1,65 +1,57 @@
 package com.castelanjr.turnbasedbattlesystem.core
 
-import com.castelanjr.turnbasedbattlesystem.action.*
+import com.castelanjr.turnbasedbattlesystem.action.CheckingStatusAction
+import com.castelanjr.turnbasedbattlesystem.action.ExecutingCommandsAction
+import com.castelanjr.turnbasedbattlesystem.action.PreparingAction
+import com.castelanjr.turnbasedbattlesystem.action.SelectingCommandAction
 import com.castelanjr.turnbasedbattlesystem.char.Character
 import com.castelanjr.turnbasedbattlesystem.command.Command
 import com.castelanjr.turnbasedbattlesystem.ui.UiInteractor
 
-class Engine(val uiInteractor: UiInteractor): Runnable {
+class Engine(val interactor: UiInteractor): Runnable {
 
     var entities: Array<Character> = emptyArray()
-    var actions = mutableListOf<Command>()
-    var currentState: Action = PreparingAction()
+    val preparingAction = PreparingAction(this, interactor)
+    val selectingCommandAction = SelectingCommandAction(this, interactor, aliveEntities())
+    val executingCommandAction = ExecutingCommandsAction(this, interactor, emptyList())
+    val checkingStatusAction = CheckingStatusAction(this, interactor, entities)
 
     override fun run() {
-        next()
+        preparingAction.onStart()
     }
 
-    fun next() {
-        var result: Pair<Boolean, Result?> = Pair(false, null)
+    fun newTurn() {
+        selectingCommandAction.entities = aliveEntities()
+        selectingCommandAction.onStart()
+    }
 
-        when(currentState) {
-            is PreparingAction -> {
-                currentState = SelectingCommandsAction(uiInteractor, entities)
-                currentState.onStart()
-            }
-            is SelectingCommandsAction -> {
-                if (currentState.isFinished()) {
-                    actions = (currentState as SelectingCommandsAction).result()
-                    currentState = ExecutingCommandsAction(actions, uiInteractor)
-                    currentState.onStart()
-                }
-            }
-            is ExecutingCommandsAction -> {
-                if (currentState.isFinished()) {
-                    currentState = CheckingStatusAction(entities)
-                    currentState.onStart()
-                }
-            }
-            is CheckingStatusAction -> {
-                if (currentState.isFinished()) {
-                    result = (currentState as CheckingStatusAction).result()
-                    if (result.first) {
-                        currentState = PreparingAction()
-                    } else {
-                        currentState = FinalizingAction()
-                    }
-                    currentState.onStart()
-                }
-            }
-            is FinalizingAction -> {
-                if (currentState.isFinished()) {
-                    result.second?.let { uiInteractor.onBattleEnded(it) }
-                }
-            }
-        }
+    fun executeCommands(actions: List<Command>) {
+        executingCommandAction.commands = actions
+        executingCommandAction.onStart()
+    }
+
+    fun checkStatus() {
+        checkingStatusAction.entities = entities
+        checkingStatusAction.onStart()
+    }
+
+    fun onBattleEnded(result: Result) {
+        interactor.onBattleEnded(result)
     }
 
     fun addNextCommand(command: Command) {
-        if (currentState is SelectingCommandsAction) {
-            (currentState as SelectingCommandsAction).addAction(command)
+        if (selectingCommandAction.isCurrent) {
+            selectingCommandAction.addCommand(command)
         }
     }
+
+    fun commandExecuted() {
+        if (executingCommandAction.isCurrent) {
+            executingCommandAction.onCommandExecuted()
+        }
+    }
+
+    fun aliveEntities() = entities.filter { it.isAlive() }
 
 }
 

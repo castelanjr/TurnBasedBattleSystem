@@ -58,8 +58,8 @@ class BattleActivity : AppCompatActivity(), View {
             if (action == null) {
                 message.visibility = GONE
             } else {
-                action.invoke()
                 message.visibility = GONE
+                action.invoke()
             }
         }
     }
@@ -111,6 +111,9 @@ class BattleActivity : AppCompatActivity(), View {
     override fun bindHero(index: Int, hero: Character) {
         val view = heroViewAt(index)
         view.visibility = VISIBLE
+        if (!hero.isAlive()) {
+            view.alpha = 0.7f
+        }
         heroesMap.put(hero, view)
     }
 
@@ -150,6 +153,9 @@ class BattleActivity : AppCompatActivity(), View {
         imageView.visibility = VISIBLE
         imageView.setImageResource(sprite)
         imageView.tag = enemy
+        if (!enemy.isAlive()) {
+            imageView.visibility = GONE
+        }
     }
 
     private fun heroViewAt(index: Int): android.view.View {

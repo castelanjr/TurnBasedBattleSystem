@@ -1,20 +1,20 @@
 package com.castelanjr.turnbasedbattlesystem.action
 
 import com.castelanjr.turnbasedbattlesystem.char.Character
+import com.castelanjr.turnbasedbattlesystem.core.Engine
 import com.castelanjr.turnbasedbattlesystem.core.Result
+import com.castelanjr.turnbasedbattlesystem.ui.UiInteractor
 
-class CheckingStatusAction(val entities: Array<Character>): Action {
-
-    var finished = false
-    var battleFinished = false
-    var result: Result? = null
+class CheckingStatusAction(engine: Engine, interactor: UiInteractor, var entities: Array<Character>)
+    : Action(engine, interactor) {
 
     override fun onStart() {
+        isCurrent = true
+
         var heroesAlive = 0
         var enemiesAlive = 0
 
-        entities
-                .filter { it.isAlive() }
+        entities.filter { it.isAlive() }
                 .forEach {
                     if (it.isPlayer) {
                         heroesAlive++
@@ -23,14 +23,18 @@ class CheckingStatusAction(val entities: Array<Character>): Action {
                     }
                 }
 
-        battleFinished = heroesAlive == 0 || enemiesAlive == 0
-        if (battleFinished) {
-            result = if (enemiesAlive == 0) Result.VICTORY else Result.DEFEAT
+        val finished = heroesAlive == 0 || enemiesAlive == 0
+        if (finished) {
+            engine.onBattleEnded(if (enemiesAlive == 0) Result.VICTORY else Result.DEFEAT)
+        } else {
+            engine.newTurn()
         }
-        finished = true
+
+        onFinish()
+
     }
 
-    fun result() = Pair(battleFinished, result)
-
-    override fun isFinished() = finished
+    override fun onFinish() {
+        isCurrent = false
+    }
 }

@@ -1,8 +1,19 @@
 package com.castelanjr.turnbasedbattlesystem.action
 
-class PreparingAction : Action {
+import com.castelanjr.turnbasedbattlesystem.core.Engine
+import com.castelanjr.turnbasedbattlesystem.ui.UiInteractor
 
-    override fun onStart() = Unit
+class PreparingAction(engine: Engine, interactor: UiInteractor)
+    : Action(engine, interactor) {
 
-    override fun isFinished() = true
+    override fun onStart() {
+        isCurrent = true
+        interactor.setupView(engine.entities)
+        onFinish()
+    }
+
+    override fun onFinish() {
+        isCurrent = false
+        engine.newTurn()
+    }
 }

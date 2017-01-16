@@ -1,9 +1,14 @@
 package com.castelanjr.turnbasedbattlesystem.action
 
-interface Action {
+import com.castelanjr.turnbasedbattlesystem.core.Engine
+import com.castelanjr.turnbasedbattlesystem.ui.UiInteractor
 
-    fun onStart()
+abstract class Action(val engine: Engine, val interactor: UiInteractor) {
 
-    fun isFinished(): Boolean
+    var isCurrent = false
+
+    abstract fun onStart()
+
+    abstract fun onFinish()
 
 }

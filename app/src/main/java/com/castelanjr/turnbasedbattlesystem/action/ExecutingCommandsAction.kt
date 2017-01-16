@@ -2,23 +2,37 @@ package com.castelanjr.turnbasedbattlesystem.action
 
 import com.castelanjr.turnbasedbattlesystem.command.Command
 import com.castelanjr.turnbasedbattlesystem.command.CommandExecutor
+import com.castelanjr.turnbasedbattlesystem.core.Engine
 import com.castelanjr.turnbasedbattlesystem.ui.UiInteractor
 
-class ExecutingCommandsAction(val actions: MutableList<Command>, interactor: UiInteractor) : Action {
+class ExecutingCommandsAction(engine: Engine, interactor: UiInteractor, var commands: List<Command>)
+    : Action(engine, interactor) {
 
-    val commandExecutor = CommandExecutor(interactor)
-    var finished = false
+    var index = 0
+    val executor = CommandExecutor(interactor)
 
     override fun onStart() {
-        actions.sortByDescending { it.actor.speed }
-
-        actions.forEach( {
-            commandExecutor.executeCommand(it)
-        })
-
-        actions.clear()
-        finished = true
+        isCurrent = true
+        index = 0
+        next()
     }
 
-    override fun isFinished() = finished
+    fun next() {
+        if (index >= commands.size) {
+            onFinish()
+            return
+        }
+        val action = commands[index]
+        executor.execute(action)
+    }
+
+    fun onCommandExecuted() {
+        index++
+        next()
+    }
+
+    override fun onFinish() {
+        isCurrent = false
+        engine.checkStatus()
+    }
 }
