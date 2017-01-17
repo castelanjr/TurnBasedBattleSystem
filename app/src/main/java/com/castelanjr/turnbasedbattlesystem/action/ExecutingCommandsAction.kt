@@ -23,7 +23,11 @@ class ExecutingCommandsAction(engine: Engine, interactor: UiInteractor, var comm
             return
         }
         val action = commands[index]
-        executor.execute(action)
+        if (action.actor.isAlive()) {
+            executor.execute(action)
+        } else {
+            onCommandExecuted()
+        }
     }
 
     fun onCommandExecuted() {

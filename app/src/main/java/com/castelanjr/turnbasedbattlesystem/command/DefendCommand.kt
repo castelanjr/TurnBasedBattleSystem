@@ -7,12 +7,4 @@ class DefendCommand(actor: Character): Command(actor, actor) {
     override fun execute() {
         actor.isDefending = true
     }
-
-    override fun successful(): Boolean {
-        return true
-    }
-
-    override fun damage(): Int {
-        return 0
-    }
 }

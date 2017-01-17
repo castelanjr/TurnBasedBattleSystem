@@ -8,12 +8,4 @@ class SkillCommand(actor: Character, val skill: Skill, target: Character): Comma
     override fun execute() {
         skill.power
     }
-
-    override fun successful(): Boolean {
-        return false
-    }
-
-    override fun damage(): Int {
-        return 0
-    }
 }

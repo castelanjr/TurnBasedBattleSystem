@@ -7,9 +7,15 @@ object DataLoader {
 
     fun entities(): Array<Character> {
         return arrayOf(
-                Character("Vahn", 0, 99, 99, 10, 10, 10, 10, 10, true, emptyArray()),
+                Character("Vahn", 0, 30, 10, 8, 14, 12, 8, 8, 10, true, emptyArray()),
 
-                Character("Slime", R.drawable.slime, 99, 50, 8, 8, 8, 8, 8, false, emptyArray())
+                Character("Lana", 0, 35, 5, 12, 8, 10, 13, 4, 7, true, emptyArray()),
+
+                Character("Slime 1", R.drawable.slime, 30, 0, 8, 10, 8, 7, 1, 1, false, emptyArray()),
+
+                Character("Slime 2", R.drawable.slime, 30, 0, 10, 6, 12, 14, 1, 1, false, emptyArray()),
+
+                Character("Slime 3", R.drawable.slime, 30, 0, 9, 8, 5, 8, 1, 1, false, emptyArray())
         )
     }
 

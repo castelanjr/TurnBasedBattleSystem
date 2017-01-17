@@ -1,14 +1,10 @@
 package com.castelanjr.turnbasedbattlesystem.ui
 
 import com.castelanjr.turnbasedbattlesystem.char.Character
-import com.castelanjr.turnbasedbattlesystem.command.AttackCommand
-import com.castelanjr.turnbasedbattlesystem.command.Command
-import com.castelanjr.turnbasedbattlesystem.command.RunCommand
-import com.castelanjr.turnbasedbattlesystem.command.SkillCommand
+import com.castelanjr.turnbasedbattlesystem.command.*
 import com.castelanjr.turnbasedbattlesystem.core.DataLoader
 import com.castelanjr.turnbasedbattlesystem.core.Engine
 import com.castelanjr.turnbasedbattlesystem.core.Result
-import org.jetbrains.anko.doAsync
 
 class UiInteractor(val view: View) {
 
@@ -21,9 +17,7 @@ class UiInteractor(val view: View) {
 
         setupView(entities)
 
-        doAsync {
-            engine.run()
-        }
+        engine.run()
 
     }
 
@@ -33,8 +27,8 @@ class UiInteractor(val view: View) {
             val index = heroes.indexOf(hero)
             view.bindHero(index, hero)
             view.showHeroName(index, hero.name)
-            view.showHeroHp(index, "HP: ${hero.hp}")
-            view.showHeroMp(index, "MP: ${hero.mp}")
+            view.showHeroHp(index, "HP: ${Math.max(hero.hp, 0)}")
+            view.showHeroMp(index, "MP: ${Math.max(hero.mp, 0)}")
         }
 
         val enemies = entities.filter { !it.isPlayer }.toList()
@@ -48,14 +42,28 @@ class UiInteractor(val view: View) {
         when (command) {
             is AttackCommand -> {
                 with(command) {
-                    view.renderAttack(actor, target, successful(), damage())
-                    view.showMessage("${actor.name} attacked ${target.name}! It " + if (successful()) "worked! Dealt ${damage()} points of damage" else "failed...",
-                            { engine.commandExecuted() })
+                    view.renderAttack(actor, target, successful, damage)
+                    setupView(engine.entities)
+                    var message = "${actor.name} attacked ${target.name}! It " + if (successful) "worked! Dealt ${damage} points of damage" else "failed..."
+
+                    if (!target.isAlive()) {
+                        message += ". ${target.name} fainted!"
+                    }
+
+                    view.showMessage(message, { engine.commandExecuted() })
                 }
             }
-            is SkillCommand -> view.renderSkill(command.actor, command.target,
-                    command.successful(), command.damage())
-            is RunCommand -> checkIfRanAway(command.isSuccessful)
+
+            is SkillCommand -> {
+                setupView(engine.entities)
+                view.renderSkill(command.actor, command.target,
+                        command.successful, command.damage)
+            }
+
+            is RunCommand -> checkIfRanAway(command.successful)
+
+            is DefendCommand -> view.showMessage("${command.actor.name} defended",
+                    { engine.commandExecuted() })
         }
     }
 

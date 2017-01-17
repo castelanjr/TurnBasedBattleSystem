@@ -19,7 +19,6 @@ class SelectingCommandAction(engine: Engine, interactor: UiInteractor, var entit
         next()
     }
 
-    @Synchronized
     fun next() {
         if (index >= entities.size) {
             onFinish()

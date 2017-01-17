@@ -1,9 +1,10 @@
 package com.castelanjr.turnbasedbattlesystem.char
 
-class Character(val name: String, val sprite: Int, val maxHP: Int, val maxMP: Int,
-                val attack: Int, val speed: Int, val defense: Int,
-                val magicAttack: Int, val magicDefense: Int, val isPlayer: Boolean,
-                val skills: Array<Skill>) {
+class Character(val name: String, val sprite: Int,
+                val maxHP: Int, val maxMP: Int,
+                val attack: Int, val speed: Int, val accuracy: Int, val defense: Int,
+                val magicAttack: Int, val magicDefense: Int,
+                val isPlayer: Boolean, val skills: Array<Skill>) {
 
     var hp = maxHP
     var mp = maxMP
