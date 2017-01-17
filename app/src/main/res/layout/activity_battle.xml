@@ -144,7 +144,7 @@
             android:padding="8dp"
             android:background="?selectableItemBackgroundBorderless"
             android:visibility="gone"
-            android:src="@drawable/slime"/>
+            android:src="@drawable/dracky"/>
 
         <ImageView
             android:id="@+id/enemy2"
@@ -154,7 +154,7 @@
             android:layout_marginTop="20dp"
             android:background="?selectableItemBackgroundBorderless"
             android:visibility="gone"
-            android:src="@drawable/slime"/>
+            android:src="@drawable/dracky"/>
 
         <ImageView
             android:id="@+id/enemy3"
@@ -163,7 +163,7 @@
             android:padding="8dp"
             android:background="?selectableItemBackgroundBorderless"
             android:visibility="gone"
-            android:src="@drawable/slime"/>
+            android:src="@drawable/dracky"/>
 
     </LinearLayout>
 

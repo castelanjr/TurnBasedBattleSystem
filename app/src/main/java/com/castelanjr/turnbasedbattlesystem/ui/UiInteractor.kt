@@ -40,30 +40,42 @@ class UiInteractor(val view: View) {
 
     fun renderCommand(command: Command) {
         when (command) {
-            is AttackCommand -> {
-                with(command) {
-                    view.renderAttack(actor, target, successful, damage)
-                    setupView(engine.entities)
-                    var message = "${actor.name} attacked ${target.name}! It " + if (successful) "worked! Dealt ${damage} points of damage" else "failed..."
+            is AttackCommand -> renderAttack(command)
 
-                    if (!target.isAlive()) {
-                        message += ". ${target.name} fainted!"
-                    }
-
-                    view.showMessage(message, { engine.commandExecuted() })
-                }
-            }
-
-            is SkillCommand -> {
-                setupView(engine.entities)
-                view.renderSkill(command.actor, command.target,
-                        command.successful, command.damage)
-            }
+            is SkillCommand -> renderSkill(command)
 
             is RunCommand -> checkIfRanAway(command.successful)
 
             is DefendCommand -> view.showMessage("${command.actor.name} defended",
                     { engine.commandExecuted() })
+        }
+    }
+
+    private fun renderSkill(command: SkillCommand) {
+        with(command) {
+            view.renderSkill(actor, target, successful, damage)
+            setupView(engine.entities)
+            var message = "${actor.name} cast ${skill.name} on ${target.name}!"
+
+            if (target.isDead()) {
+                message += ". ${target.name} fainted!"
+            }
+
+            view.showMessage(message, { engine.commandExecuted() })
+        }
+    }
+
+    private fun renderAttack(command: AttackCommand) {
+        with(command) {
+            view.renderAttack(actor, target, successful, damage)
+            setupView(engine.entities)
+            var message = "${actor.name} attacked ${target.name}! It " + if (successful) "worked! Dealt ${damage} points of damage" else "failed..."
+
+            if (target.isDead()) {
+                message += ". ${target.name} fainted!"
+            }
+
+            view.showMessage(message, { engine.commandExecuted() })
         }
     }
 
@@ -91,7 +103,10 @@ class UiInteractor(val view: View) {
     }
 
     fun onSkillSelected(actor: Character) {
-        view.showSkills(actor.skills)
+//        view.showSkills(actor.skills)
+
+        view.showMessage("Pick a target")
+        view.pickTarget()
     }
 
     fun onRunSelected() {

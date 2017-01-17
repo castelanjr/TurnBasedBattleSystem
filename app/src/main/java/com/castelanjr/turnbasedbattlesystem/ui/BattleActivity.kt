@@ -8,10 +8,7 @@ import android.widget.ImageView
 import com.castelanjr.turnbasedbattlesystem.R
 import com.castelanjr.turnbasedbattlesystem.char.Character
 import com.castelanjr.turnbasedbattlesystem.char.Skill
-import com.castelanjr.turnbasedbattlesystem.command.AttackCommand
-import com.castelanjr.turnbasedbattlesystem.command.Command
-import com.castelanjr.turnbasedbattlesystem.command.DefendCommand
-import com.castelanjr.turnbasedbattlesystem.command.RunCommand
+import com.castelanjr.turnbasedbattlesystem.command.*
 import kotlinx.android.synthetic.main.activity_battle.*
 import org.jetbrains.anko.onClick
 
@@ -73,7 +70,7 @@ class BattleActivity : AppCompatActivity(), View {
     }
 
     override fun pickTarget() {
-        listOf(enemy1, enemy2, enemy3)
+        listOf(enemy1, enemy2, enemy3, hero1, hero2, hero3)
                 .forEach { it.onClick {
                     currentCommandTarget = it?.tag as Character
                     currentCommandTarget?.let { presenter.onTargetSelected(it) }
@@ -96,7 +93,7 @@ class BattleActivity : AppCompatActivity(), View {
         return when (commandType) {
             "attack" -> AttackCommand(actor(currentCommandActor), actor(currentCommandTarget))
             "defend" -> DefendCommand(actor(currentCommandActor))
-            "skill" -> throw NotImplementedError("Feature not implemented yet...")
+            "skill" -> SkillCommand(actor(currentCommandActor), Skill.CURE, actor(currentCommandTarget))
             "run" -> RunCommand(actor(currentCommandActor))
             else -> throw IllegalStateException("Command type can't be null here")
         }
@@ -111,9 +108,10 @@ class BattleActivity : AppCompatActivity(), View {
     override fun bindHero(index: Int, hero: Character) {
         val view = heroViewAt(index)
         view.visibility = VISIBLE
-        if (!hero.isAlive()) {
+        if (hero.isDead()) {
             view.alpha = 0.7f
         }
+        view.tag = hero
         heroesMap.put(hero, view)
     }
 
@@ -153,7 +151,7 @@ class BattleActivity : AppCompatActivity(), View {
         imageView.visibility = VISIBLE
         imageView.setImageResource(sprite)
         imageView.tag = enemy
-        if (!enemy.isAlive()) {
+        if (enemy.isDead()) {
             imageView.visibility = GONE
         }
     }

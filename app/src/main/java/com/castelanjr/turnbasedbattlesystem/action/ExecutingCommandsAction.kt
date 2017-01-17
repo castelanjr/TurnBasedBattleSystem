@@ -23,7 +23,9 @@ class ExecutingCommandsAction(engine: Engine, interactor: UiInteractor, var comm
             return
         }
         val action = commands[index]
-        if (action.actor.isAlive()) {
+        // For now let's just skip if the target is dead
+        // TODO: pick next random target if the current one is dead
+        if (action.actor.isAlive() && action.target.isAlive()) {
             executor.execute(action)
         } else {
             onCommandExecuted()
