@@ -1,6 +1,6 @@
 package com.castelanjr.turnbasedbattlesystem.action
 
-import com.castelanjr.turnbasedbattlesystem.ai.newAiCommand
+import com.castelanjr.turnbasedbattlesystem.ai.AiDecide
 import com.castelanjr.turnbasedbattlesystem.char.Character
 import com.castelanjr.turnbasedbattlesystem.command.Command
 import com.castelanjr.turnbasedbattlesystem.core.Engine
@@ -28,7 +28,7 @@ class SelectingCommandAction(engine: Engine, interactor: UiInteractor, var entit
         if (actor.isPlayer) {
             interactor.requestActionFromPlayer(actor)
         } else {
-            addCommand(newAiCommand(actor, entities.filter { it.isPlayer }))
+            addCommand(AiDecide.newAiCommand(actor, entities.filter { it.isPlayer }))
         }
     }
 

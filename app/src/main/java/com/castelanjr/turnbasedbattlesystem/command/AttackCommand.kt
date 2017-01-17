@@ -14,6 +14,10 @@ class AttackCommand(actor: Character, target: Character): Command(actor, target)
             val dmg = Math.round((Math.random() + 1) * actor.attack).toInt()
             damage = Math.max(dmg - target.defense, 1)
 
+            if (target.isDefending) {
+                damage /= 2
+            }
+
             target.hp = target.hp - damage
         }
     }

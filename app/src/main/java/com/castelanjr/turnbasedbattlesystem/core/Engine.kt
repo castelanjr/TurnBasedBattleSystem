@@ -21,6 +21,7 @@ class Engine(val interactor: UiInteractor): Runnable {
     }
 
     fun newTurn() {
+        cleanup()
         selectingCommandAction.entities = aliveEntities()
         selectingCommandAction.onStart()
     }
@@ -52,6 +53,10 @@ class Engine(val interactor: UiInteractor): Runnable {
     }
 
     fun aliveEntities() = entities.filter { it.isAlive() }
+
+    private fun cleanup() {
+        entities.filter { it.isDefending }.forEach { it.isDefending = false }
+    }
 
 }
 
