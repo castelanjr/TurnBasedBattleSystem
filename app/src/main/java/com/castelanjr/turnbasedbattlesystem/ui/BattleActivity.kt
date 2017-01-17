@@ -1,5 +1,6 @@
 package com.castelanjr.turnbasedbattlesystem.ui
 
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View.GONE
@@ -14,7 +15,7 @@ import org.jetbrains.anko.onClick
 
 class BattleActivity : AppCompatActivity(), View {
 
-    var heroesMap = mutableMapOf<Character, android.view.View>()
+    var charactersMap = mutableMapOf<Character, android.view.View>()
     val presenter = UiInteractor(this)
 
     var currentCommandActor: Character? = null
@@ -78,7 +79,10 @@ class BattleActivity : AppCompatActivity(), View {
     }
 
     override fun renderAttack(actor: Character, target: Character, successful: Boolean, damage: Int) {
-
+        ObjectAnimator
+                .ofFloat(charactersMap[target], "translationX", 0f, 25f, -25f, 25f, -25f,15f, -15f, 6f, -6f, 0f)
+                .setDuration(500L)
+                .start()
     }
 
     override fun renderSkill(actor: Character, target: Character, successful: Boolean, damage: Int) {
@@ -112,7 +116,7 @@ class BattleActivity : AppCompatActivity(), View {
             view.alpha = 0.7f
         }
         view.tag = hero
-        heroesMap.put(hero, view)
+        charactersMap.put(hero, view)
     }
 
     override fun showHeroName(index: Int, name: String) {
@@ -154,6 +158,7 @@ class BattleActivity : AppCompatActivity(), View {
         if (enemy.isDead()) {
             imageView.visibility = GONE
         }
+        charactersMap.put(enemy, imageView)
     }
 
     private fun heroViewAt(index: Int): android.view.View {
