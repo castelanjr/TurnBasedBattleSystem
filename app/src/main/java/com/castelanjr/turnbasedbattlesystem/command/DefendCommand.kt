@@ -7,4 +7,8 @@ class DefendCommand(actor: Character): Command(actor, actor) {
     override fun execute() {
         actor.isDefending = true
     }
+
+    override fun message(): String {
+        return "${actor.name} defended"
+    }
 }

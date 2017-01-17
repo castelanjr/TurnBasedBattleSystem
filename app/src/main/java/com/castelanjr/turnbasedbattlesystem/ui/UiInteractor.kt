@@ -44,24 +44,21 @@ class UiInteractor(val view: View) {
 
             is SkillCommand -> renderSkill(command)
 
-            is RunCommand -> checkIfRanAway(command.successful)
+            is RunCommand -> checkIfRanAway(command)
 
-            is DefendCommand -> view.showMessage("${command.actor.name} defended",
-                    { engine.commandExecuted() })
+            is DefendCommand -> renderDefend(command)
         }
+    }
+
+    private fun renderDefend(command: DefendCommand) {
+        view.showMessage(command.message(), { engine.commandExecuted() })
     }
 
     private fun renderSkill(command: SkillCommand) {
         with(command) {
             view.renderSkill(actor, target, successful, damage)
             setupView(engine.entities)
-            var message = "${actor.name} cast ${skill.name} on ${target.name}!"
-
-            if (target.isDead()) {
-                message += ". ${target.name} fainted!"
-            }
-
-            view.showMessage(message, { engine.commandExecuted() })
+            view.showMessage(message(), { engine.commandExecuted() })
         }
     }
 
@@ -69,22 +66,13 @@ class UiInteractor(val view: View) {
         with(command) {
             view.renderAttack(actor, target, successful, damage)
             setupView(engine.entities)
-            var message = "${actor.name} attacked ${target.name}! It " + if (successful) "worked! Dealt ${damage} points of damage" else "failed..."
-
-            if (target.isDead()) {
-                message += ". ${target.name} fainted!"
-            }
-
-            view.showMessage(message, { engine.commandExecuted() })
+            view.showMessage(message(), { engine.commandExecuted() })
         }
     }
 
-    private fun checkIfRanAway(success: Boolean) {
-        if (success) {
-            view.showMessage("Ran away from the enemies!", { view.finalize() })
-        } else {
-            view.showMessage("Couldn't run away...", { engine.commandExecuted() })
-        }
+    private fun checkIfRanAway(command: RunCommand) {
+        view.showMessage(command.message(),
+                { if (command.successful) view.finalize() else engine.commandExecuted() })
     }
 
     fun requestActionFromPlayer(actor: Character) {

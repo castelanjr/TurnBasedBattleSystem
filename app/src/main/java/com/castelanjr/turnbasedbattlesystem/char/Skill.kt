@@ -10,4 +10,6 @@ abstract class Skill(val name: String, val power: Int, val colorAnimation: Int) 
 
     abstract fun execute(actor: Character, target: Character)
 
+    open fun message() = ""
+
 }

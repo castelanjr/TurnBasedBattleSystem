@@ -1,6 +1,9 @@
 package com.castelanjr.turnbasedbattlesystem.ui
 
 import android.animation.ObjectAnimator
+import android.media.AudioAttributes
+import android.media.AudioManager
+import android.media.SoundPool
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View.GONE
@@ -13,14 +16,19 @@ import com.castelanjr.turnbasedbattlesystem.command.*
 import kotlinx.android.synthetic.main.activity_battle.*
 import org.jetbrains.anko.onClick
 
+
+
 class BattleActivity : AppCompatActivity(), View {
 
     var charactersMap = mutableMapOf<Character, android.view.View>()
     val presenter = UiInteractor(this)
+    var sp: SoundPool? = null
 
     var currentCommandActor: Character? = null
     var currentCommandTarget: Character? = null
     var commandType: String? = null
+
+    val soundIds = mutableListOf<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,21 +37,46 @@ class BattleActivity : AppCompatActivity(), View {
         attack.onClick {
             commandType = "attack"
             presenter.onAttackSelected()
+            sp?.play(soundIds[1], 1f, 1f, 1, 0, 1f)
         }
 
         defend.onClick {
             commandType = "defend"
             presenter.onDefendSelected()
+            sp?.play(soundIds[1], 1f, 1f, 1, 0, 1f)
         }
 
         skill.onClick {
             commandType = "skill"
             currentCommandActor?.let { it1 -> presenter.onSkillSelected(it1) }
+            sp?.play(soundIds[1], 1f, 1f, 1, 0, 1f)
         }
 
         run.onClick {
             commandType = "run"
             presenter.onRunSelected()
+            sp?.play(soundIds[1], 1f, 1f, 1, 0, 1f)
+        }
+
+        val attrs = AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build()
+
+        sp = SoundPool.Builder()
+                .setMaxStreams(3)
+                .setAudioAttributes(attrs)
+                .build()
+
+        volumeControlStream = AudioManager.STREAM_MUSIC
+
+        val sound = sp?.load(this, R.raw.hit23, 1)
+        if (sound != null) {
+            soundIds.add(sound)
+        }
+        val click = sp?.load(this, R.raw.click, 1)
+        if (click != null) {
+            soundIds.add(click)
         }
 
         presenter.initialize()
@@ -53,6 +86,7 @@ class BattleActivity : AppCompatActivity(), View {
         message.visibility = VISIBLE
         message.text = text
         message.onClick {
+            sp?.play(soundIds[1], 1f, 1f, 1, 0, 1f)
             if (action == null) {
                 message.visibility = GONE
             } else {
@@ -73,12 +107,14 @@ class BattleActivity : AppCompatActivity(), View {
     override fun pickTarget() {
         listOf(enemy1, enemy2, enemy3, hero1, hero2, hero3)
                 .forEach { it.onClick {
+                    sp?.play(soundIds[1], 1f, 1f, 1, 0, 1f)
                     currentCommandTarget = it?.tag as Character
                     currentCommandTarget?.let { presenter.onTargetSelected(it) }
                 } }
     }
 
     override fun renderAttack(actor: Character, target: Character, successful: Boolean, damage: Int) {
+        sp?.play(soundIds[0], 1f, 1f, 1, 0, 1f)
         ObjectAnimator
                 .ofFloat(charactersMap[target], "translationX", 0f, 25f, -25f, 25f, -25f,15f, -15f, 6f, -6f, 0f)
                 .setDuration(500L)

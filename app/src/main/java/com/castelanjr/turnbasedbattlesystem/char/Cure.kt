@@ -9,5 +9,7 @@ class Cure : Skill("Cure", 20, Color.GREEN) {
         result = Math.min(result, target.maxHP - target.hp)
         target.hp += result
     }
+
+    override fun message() = " It restored $result hp"
 }
 

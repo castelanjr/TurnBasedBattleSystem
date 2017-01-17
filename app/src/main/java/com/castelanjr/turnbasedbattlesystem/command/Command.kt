@@ -9,4 +9,6 @@ abstract class Command(val actor: Character, val target: Character) {
 
     abstract fun execute()
 
+    open fun message() = ""
+
 }

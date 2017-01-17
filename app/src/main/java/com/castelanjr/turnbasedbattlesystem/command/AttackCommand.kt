@@ -21,4 +21,12 @@ class AttackCommand(actor: Character, target: Character): Command(actor, target)
             target.hp = target.hp - damage
         }
     }
+
+    override fun message(): String {
+        var message = "${actor.name} attacked ${target.name}! It " + if (successful) "worked! Dealt $damage points of damage" else "failed..."
+        if (target.isDead()) {
+            message += ". ${target.name} fainted!"
+        }
+        return message
+    }
 }

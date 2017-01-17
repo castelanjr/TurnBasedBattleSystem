@@ -8,4 +8,13 @@ class SkillCommand(actor: Character, val skill: Skill, target: Character): Comma
     override fun execute() {
         skill.execute(actor, target)
     }
+
+    override fun message(): String {
+        var message = "${actor.name} cast ${skill.name} on ${target.name}! ${skill.message()}"
+
+        if (target.isDead()) {
+            message += ". ${target.name} fainted!"
+        }
+        return message
+    }
 }
