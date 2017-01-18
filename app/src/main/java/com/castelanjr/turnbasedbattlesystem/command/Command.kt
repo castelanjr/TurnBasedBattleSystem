@@ -1,6 +1,6 @@
 package com.castelanjr.turnbasedbattlesystem.command
 
-import com.castelanjr.turnbasedbattlesystem.char.Character
+import com.castelanjr.turnbasedbattlesystem.entities.Character
 
 abstract class Command(val actor: Character, val target: Character) {
 

@@ -1,4 +1,6 @@
-package com.castelanjr.turnbasedbattlesystem.char
+package com.castelanjr.turnbasedbattlesystem.entities
+
+import com.castelanjr.turnbasedbattlesystem.entities.skills.Skill
 
 class Character(val name: String, val sprite: Int,
                 val maxHP: Int, val maxMP: Int,

@@ -3,7 +3,7 @@ package com.castelanjr.turnbasedbattlesystem.action
 import com.castelanjr.turnbasedbattlesystem.core.Engine
 import com.castelanjr.turnbasedbattlesystem.ui.UiInteractor
 
-class PreparingAction(engine: Engine, interactor: UiInteractor)
+class PrepareAction(engine: Engine, interactor: UiInteractor)
     : Action(engine, interactor) {
 
     override fun onStart() {

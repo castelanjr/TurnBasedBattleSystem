@@ -1,11 +1,11 @@
 package com.castelanjr.turnbasedbattlesystem.action
 
-import com.castelanjr.turnbasedbattlesystem.char.Character
+import com.castelanjr.turnbasedbattlesystem.entities.Character
 import com.castelanjr.turnbasedbattlesystem.core.Engine
 import com.castelanjr.turnbasedbattlesystem.core.Result
 import com.castelanjr.turnbasedbattlesystem.ui.UiInteractor
 
-class CheckingStatusAction(engine: Engine, interactor: UiInteractor, var entities: Array<Character>)
+class CheckStatusAction(engine: Engine, interactor: UiInteractor, var entities: Array<Character>)
     : Action(engine, interactor) {
 
     override fun onStart() {

@@ -1,4 +1,6 @@
-package com.castelanjr.turnbasedbattlesystem.char
+package com.castelanjr.turnbasedbattlesystem.entities.skills
+
+import com.castelanjr.turnbasedbattlesystem.entities.Character
 
 abstract class Skill(val name: String, val cost: Int, val power: Int, val colorAnimation: Int) {
 

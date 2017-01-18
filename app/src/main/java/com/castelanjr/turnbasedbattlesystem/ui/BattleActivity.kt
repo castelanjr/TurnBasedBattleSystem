@@ -3,22 +3,28 @@ package com.castelanjr.turnbasedbattlesystem.ui
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
+import android.app.Service
+import android.content.ComponentName
+import android.content.Intent
+import android.content.ServiceConnection
 import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.SoundPool
 import android.os.Bundle
+import android.os.IBinder
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
 import android.view.View.*
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.castelanjr.turnbasedbattlesystem.R
-import com.castelanjr.turnbasedbattlesystem.char.Character
-import com.castelanjr.turnbasedbattlesystem.char.Skill
+import com.castelanjr.turnbasedbattlesystem.entities.Character
+import com.castelanjr.turnbasedbattlesystem.entities.skills.Skill
 import com.castelanjr.turnbasedbattlesystem.command.*
 import kotlinx.android.synthetic.main.activity_battle.*
 import org.jetbrains.anko.backgroundColor
@@ -39,6 +45,11 @@ class BattleActivity : AppCompatActivity(), View {
     var clickSound = 0
     var attackSound = 0
     var skillSound = 0
+
+    var bound = false
+    var service: MusicService? = null
+    var musicConnection = Connection()
+
 
     lateinit var adapter: SkillsAdapter
 
@@ -86,6 +97,8 @@ class BattleActivity : AppCompatActivity(), View {
         clickSound = sp?.load(this, R.raw.click, 1) as Int
         skillSound = sp?.load(this, R.raw.zap2, 1) as Int
 
+        doBindService()
+
         adapter = SkillsAdapter {
             playClick()
             currentCommandSkill = it
@@ -101,6 +114,7 @@ class BattleActivity : AppCompatActivity(), View {
     override fun onDestroy() {
         super.onDestroy()
         sp?.release()
+        doUnbindService()
     }
 
     override fun showMessage(text: String, action: (() -> Unit?)?) {
@@ -265,7 +279,7 @@ class BattleActivity : AppCompatActivity(), View {
         sp?.play(skillSound, 1f, 1f, 1, 0, 1f)
     }
 
-    inner class SkillsAdapter(val listener: (skill: Skill) -> Unit): RecyclerView.Adapter<Holder>() {
+    class SkillsAdapter(val listener: (skill: Skill) -> Unit): RecyclerView.Adapter<Holder>() {
 
         var data = emptyArray<Skill>()
         set(value) {
@@ -280,12 +294,13 @@ class BattleActivity : AppCompatActivity(), View {
         override fun getItemCount() = data.size
 
         override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): Holder {
-            return Holder(layoutInflater.inflate(R.layout.adapter_skill, parent, false),
+            return Holder(LayoutInflater.from(parent?.context)
+                    .inflate(R.layout.adapter_skill, parent, false),
                     listener)
         }
     }
 
-    inner class Holder(itemView: android.view.View?, click: (skill: Skill) -> Unit)
+    class Holder(itemView: android.view.View?, click: (skill: Skill) -> Unit)
         : RecyclerView.ViewHolder(itemView) {
         lateinit var skill: Skill
 
@@ -298,6 +313,31 @@ class BattleActivity : AppCompatActivity(), View {
             if (itemView != null) {
                 (itemView as TextView).text = skill.name
             }
+        }
+    }
+
+    inner class Connection: ServiceConnection {
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            service = null
+        }
+
+        override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
+            if (binder != null) {
+                service = (binder as MusicService.ServiceBinder).service()
+            }
+        }
+    }
+
+    fun doBindService() {
+        bound = bindService(Intent(this, MusicService::class.java),
+                musicConnection, Service.BIND_AUTO_CREATE)
+    }
+
+    fun doUnbindService() {
+        if (bound) {
+            unbindService(musicConnection)
+            bound = false
         }
     }
 }

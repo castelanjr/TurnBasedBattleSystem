@@ -1,12 +1,12 @@
 package com.castelanjr.turnbasedbattlesystem.action
 
 import com.castelanjr.turnbasedbattlesystem.ai.AiDecide
-import com.castelanjr.turnbasedbattlesystem.char.Character
+import com.castelanjr.turnbasedbattlesystem.entities.Character
 import com.castelanjr.turnbasedbattlesystem.command.Command
 import com.castelanjr.turnbasedbattlesystem.core.Engine
 import com.castelanjr.turnbasedbattlesystem.ui.UiInteractor
 
-class SelectingCommandAction(engine: Engine, interactor: UiInteractor, var entities: List<Character>)
+class SelectCommandAction(engine: Engine, interactor: UiInteractor, var entities: List<Character>)
     : Action(engine, interactor) {
 
     val actions = mutableListOf<Command>()

@@ -1,6 +1,6 @@
 package com.castelanjr.turnbasedbattlesystem.ai
 
-import com.castelanjr.turnbasedbattlesystem.char.Character
+import com.castelanjr.turnbasedbattlesystem.entities.Character
 import com.castelanjr.turnbasedbattlesystem.command.AttackCommand
 import com.castelanjr.turnbasedbattlesystem.command.Command
 import com.castelanjr.turnbasedbattlesystem.command.DefendCommand

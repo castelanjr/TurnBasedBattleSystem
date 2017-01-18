@@ -1,6 +1,6 @@
 package com.castelanjr.turnbasedbattlesystem.command
 
-import com.castelanjr.turnbasedbattlesystem.char.Character
+import com.castelanjr.turnbasedbattlesystem.entities.Character
 import java.util.*
 
 class AttackCommand(actor: Character, target: Character): Command(actor, target) {

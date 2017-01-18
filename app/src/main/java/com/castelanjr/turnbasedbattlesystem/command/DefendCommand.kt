@@ -1,6 +1,6 @@
 package com.castelanjr.turnbasedbattlesystem.command
 
-import com.castelanjr.turnbasedbattlesystem.char.Character
+import com.castelanjr.turnbasedbattlesystem.entities.Character
 
 class DefendCommand(actor: Character): Command(actor, actor) {
 

@@ -1,7 +1,7 @@
 package com.castelanjr.turnbasedbattlesystem.ui
 
-import com.castelanjr.turnbasedbattlesystem.char.Character
-import com.castelanjr.turnbasedbattlesystem.char.Skill
+import com.castelanjr.turnbasedbattlesystem.entities.Character
+import com.castelanjr.turnbasedbattlesystem.entities.skills.Skill
 import com.castelanjr.turnbasedbattlesystem.command.AttackCommand
 import com.castelanjr.turnbasedbattlesystem.command.Command
 import com.castelanjr.turnbasedbattlesystem.command.SkillCommand

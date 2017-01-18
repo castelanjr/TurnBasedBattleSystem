@@ -5,13 +5,15 @@ import com.castelanjr.turnbasedbattlesystem.command.CommandExecutor
 import com.castelanjr.turnbasedbattlesystem.core.Engine
 import com.castelanjr.turnbasedbattlesystem.ui.UiInteractor
 
-class ExecutingCommandsAction(engine: Engine, interactor: UiInteractor, var commands: List<Command>)
+class ExecuteCommandsAction(engine: Engine, interactor: UiInteractor, var commands: List<Command>)
     : Action(engine, interactor) {
 
     var index = 0
     val executor = CommandExecutor(interactor)
 
     override fun onStart() {
+        commands.sortedByDescending { it.actor.speed }
+
         isCurrent = true
         index = 0
         next()
@@ -23,8 +25,8 @@ class ExecutingCommandsAction(engine: Engine, interactor: UiInteractor, var comm
             return
         }
         val action = commands[index]
-        // For now let's just skip if the target is dead
         // TODO: pick next random target if the current one is dead
+        // For now let's just skip if the target is dead
         if (action.actor.isAlive() && action.target.isAlive()) {
             executor.execute(action)
         } else {
