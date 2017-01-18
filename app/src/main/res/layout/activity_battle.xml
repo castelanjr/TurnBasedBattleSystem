@@ -167,15 +167,30 @@
 
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <LinearLayout
         android:id="@+id/skills"
-        android:layout_width="180dp"
-        android:layout_height="200dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="@drawable/bg_window"
         android:layout_marginLeft="8dp"
         android:visibility="gone"
         tools:visibility="visible"
-        android:layout_above="@+id/commands"/>
+        android:orientation="vertical"
+        android:layout_above="@+id/commands">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerview"
+            android:layout_width="180dp"
+            android:layout_height="180dp"/>
+
+        <Button
+            android:id="@+id/cancel_skill"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:layout_margin="2dp"/>
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/commands"

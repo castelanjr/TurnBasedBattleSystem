@@ -12,7 +12,7 @@ class ExecuteCommandsAction(engine: Engine, interactor: UiInteractor, var comman
     val executor = CommandExecutor(interactor)
 
     override fun onStart() {
-        commands.sortedByDescending { it.actor.speed }
+        commands = commands.sortedByDescending { it.actor.speed }
 
         isCurrent = true
         index = 0

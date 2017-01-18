@@ -23,9 +23,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.castelanjr.turnbasedbattlesystem.R
+import com.castelanjr.turnbasedbattlesystem.command.*
 import com.castelanjr.turnbasedbattlesystem.entities.Character
 import com.castelanjr.turnbasedbattlesystem.entities.skills.Skill
-import com.castelanjr.turnbasedbattlesystem.command.*
 import kotlinx.android.synthetic.main.activity_battle.*
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.backgroundDrawable
@@ -81,6 +81,13 @@ class BattleActivity : AppCompatActivity(), View {
             playClick()
         }
 
+        cancel_skill.onClick {
+            commandType = null
+            message.visibility = GONE
+            skills.visibility = GONE
+            playClick()
+        }
+
         val attrs = AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_GAME)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -104,9 +111,9 @@ class BattleActivity : AppCompatActivity(), View {
             currentCommandSkill = it
             presenter.onSkillSelected(it)
         }
-        skills.layoutManager = LinearLayoutManager(this)
-        skills.itemAnimator = DefaultItemAnimator()
-        skills.adapter = adapter
+        recyclerview.layoutManager = LinearLayoutManager(this)
+        recyclerview.itemAnimator = DefaultItemAnimator()
+        recyclerview.adapter = adapter
 
         presenter.initialize()
     }
