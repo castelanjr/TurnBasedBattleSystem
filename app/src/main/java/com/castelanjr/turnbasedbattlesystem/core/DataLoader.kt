@@ -14,9 +14,9 @@ object DataLoader {
 
             Character("Lana", 0, 28, 24, 7, 10, 9, 7, 15, 13, true, arrayOf(Skill.CURE, Skill.FIRE)), // Mage
 
-            Character("Dracky 1", R.drawable.dracky, 30, 0, 7, 10, 8, 7, 4, 4, false, emptyArray()),
+            Character("Dracky 1", R.drawable.dracky, 30, 5, 7, 10, 8, 7, 4, 4, false, arrayOf(Skill.BITE)),
 
-            Character("Dracky 2", R.drawable.dracky, 30, 0, 10, 6, 11, 12, 1, 1, false, emptyArray()),
+            Character("Dracky 2", R.drawable.dracky, 30, 5, 10, 6, 11, 12, 1, 1, false, arrayOf(Skill.BITE)),
 
             Character("Dracky 3", R.drawable.dracky, 30, 5, 9, 8, 5, 8, 1, 1, false, arrayOf(Skill.BITE))
         )
