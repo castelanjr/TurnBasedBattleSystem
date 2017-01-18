@@ -1,16 +1,15 @@
 package com.castelanjr.turnbasedbattlesystem.ai
 
-import com.castelanjr.turnbasedbattlesystem.entities.Character
 import com.castelanjr.turnbasedbattlesystem.command.AttackCommand
 import com.castelanjr.turnbasedbattlesystem.command.Command
 import com.castelanjr.turnbasedbattlesystem.command.DefendCommand
 import com.castelanjr.turnbasedbattlesystem.command.SkillCommand
+import com.castelanjr.turnbasedbattlesystem.entities.Character
 import java.util.*
 
 object AiDecide {
 
     fun newAiCommand(actor: Character, entities: List<Character>): Command {
-
         val random = Random()
 
         val hp = actor.hpPercentage()
@@ -23,7 +22,7 @@ object AiDecide {
                 return AttackCommand(actor, entities[random.nextInt(entities.size)])
             }
         } else {
-            if (actor.hasSkills() && random.nextBoolean()) {
+            if (actor.hasSkills() && random.nextBoolean() && actor.mp == actor.maxMP) {
                 return SkillCommand(actor, actor.skills[random.nextInt(actor.skills.size)],
                         entities[random.nextInt(entities.size)])
             } else {

@@ -7,6 +7,7 @@ abstract class Skill(val name: String, val cost: Int, val power: Int, val colorA
     companion object{
         val CURE = Cure()
         val FIRE = Fire()
+        val BITE = Bite()
     }
 
     var result: Int = 0

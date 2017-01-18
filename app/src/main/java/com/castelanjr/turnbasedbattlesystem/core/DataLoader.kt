@@ -18,7 +18,7 @@ object DataLoader {
 
             Character("Dracky 2", R.drawable.dracky, 30, 0, 10, 6, 11, 12, 1, 1, false, emptyArray()),
 
-            Character("Dracky 3", R.drawable.dracky, 30, 0, 9, 8, 5, 8, 1, 1, false, emptyArray())
+            Character("Dracky 3", R.drawable.dracky, 30, 5, 9, 8, 5, 8, 1, 1, false, arrayOf(Skill.BITE))
         )
     }
 

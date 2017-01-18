@@ -6,7 +6,7 @@ import com.castelanjr.turnbasedbattlesystem.entities.Character
 class Fire: Skill("Fire", 8, 20, Color.RED) {
 
     override fun internalExecute(actor: Character, target: Character) {
-        result = ((Math.random() * actor.magicAttack) + power).toInt()
+        result = ((Math.random() * actor.magicAttack) + power).toInt() - target.magicDefense
         target.hp -= result
     }
 
