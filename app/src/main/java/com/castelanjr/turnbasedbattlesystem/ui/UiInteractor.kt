@@ -1,6 +1,7 @@
 package com.castelanjr.turnbasedbattlesystem.ui
 
 import com.castelanjr.turnbasedbattlesystem.char.Character
+import com.castelanjr.turnbasedbattlesystem.char.Skill
 import com.castelanjr.turnbasedbattlesystem.command.*
 import com.castelanjr.turnbasedbattlesystem.core.DataLoader
 import com.castelanjr.turnbasedbattlesystem.core.Engine
@@ -91,10 +92,8 @@ class UiInteractor(val view: View) {
     }
 
     fun onSkillSelected(actor: Character) {
-//        view.showSkills(actor.skills)
-
-        view.showMessage("Pick a target")
-        view.pickTarget()
+        view.showMessage("Select a skill")
+        view.showSkills(actor.skills)
     }
 
     fun onRunSelected() {
@@ -105,6 +104,12 @@ class UiInteractor(val view: View) {
     fun onTargetSelected(target: Character) {
         view.showMessage("Target: ${target.name}")
         engine.addNextCommand(view.command())
+    }
+
+    fun onSkillSelected(skill: Skill) {
+        view.showMessage("Pick a target to cast ${skill.name}")
+        view.dismissSkills()
+        view.pickTarget()
     }
 
     fun onBattleEnded(result: Result) {

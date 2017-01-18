@@ -32,6 +32,8 @@ interface View {
 
     fun showEnemy(index: Int, enemy: Character, sprite: Int)
 
-    fun showSkills(skills: Array<Skill>)
+    fun showSkills(skillList: Array<Skill>)
+
+    fun dismissSkills()
 
 }

@@ -6,17 +6,20 @@ import android.media.AudioManager
 import android.media.SoundPool
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.DefaultItemAnimator
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import com.castelanjr.turnbasedbattlesystem.R
 import com.castelanjr.turnbasedbattlesystem.char.Character
 import com.castelanjr.turnbasedbattlesystem.char.Skill
 import com.castelanjr.turnbasedbattlesystem.command.*
 import kotlinx.android.synthetic.main.activity_battle.*
 import org.jetbrains.anko.onClick
-
-
 
 class BattleActivity : AppCompatActivity(), View {
 
@@ -27,8 +30,11 @@ class BattleActivity : AppCompatActivity(), View {
     var currentCommandActor: Character? = null
     var currentCommandTarget: Character? = null
     var commandType: String? = null
+    var currentCommandSkill: Skill? = null
 
     val soundIds = mutableListOf<Int>()
+
+    lateinit var adapter: SkillsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +70,7 @@ class BattleActivity : AppCompatActivity(), View {
                 .build()
 
         sp = SoundPool.Builder()
-                .setMaxStreams(3)
+                .setMaxStreams(5)
                 .setAudioAttributes(attrs)
                 .build()
 
@@ -79,7 +85,21 @@ class BattleActivity : AppCompatActivity(), View {
             soundIds.add(click)
         }
 
+        adapter = SkillsAdapter {
+            sp?.play(soundIds[1], 1f, 1f, 1, 0, 1f)
+            currentCommandSkill = it
+            presenter.onSkillSelected(it)
+        }
+        skills.layoutManager = LinearLayoutManager(this)
+        skills.itemAnimator = DefaultItemAnimator()
+        skills.adapter = adapter
+
         presenter.initialize()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        sp?.release()
     }
 
     override fun showMessage(text: String, action: (() -> Unit?)?) {
@@ -133,7 +153,7 @@ class BattleActivity : AppCompatActivity(), View {
         return when (commandType) {
             "attack" -> AttackCommand(actor(currentCommandActor), actor(currentCommandTarget))
             "defend" -> DefendCommand(actor(currentCommandActor))
-            "skill" -> SkillCommand(actor(currentCommandActor), Skill.CURE, actor(currentCommandTarget))
+            "skill" -> SkillCommand(actor(currentCommandActor), skill(currentCommandSkill), actor(currentCommandTarget))
             "run" -> RunCommand(actor(currentCommandActor))
             else -> throw IllegalStateException("Command type can't be null here")
         }
@@ -141,8 +161,11 @@ class BattleActivity : AppCompatActivity(), View {
 
     private fun actor(actor: Character?) = actor ?: throw IllegalStateException("Actor can't be null here")
 
-    override fun showSkills(skills: Array<Skill>) {
+    private fun skill(skill: Skill?) = skill ?: throw IllegalStateException("Skill shouldn't be null here")
 
+    override fun showSkills(skillList: Array<Skill>) {
+        adapter.data = skillList
+        skills.visibility = VISIBLE
     }
 
     override fun bindHero(index: Int, hero: Character) {
@@ -187,6 +210,10 @@ class BattleActivity : AppCompatActivity(), View {
         }
     }
 
+    override fun dismissSkills() {
+        skills.visibility = GONE
+    }
+
     private fun bindEnemy(imageView: ImageView, enemy: Character, sprite: Int) {
         imageView.visibility = VISIBLE
         imageView.setImageResource(sprite)
@@ -203,6 +230,42 @@ class BattleActivity : AppCompatActivity(), View {
             1 -> hero2
             2 -> hero3
             else -> throw IllegalArgumentException("Invalid index")
+        }
+    }
+
+    inner class SkillsAdapter(val listener: (skill: Skill) -> Unit): RecyclerView.Adapter<Holder>() {
+
+        var data = emptyArray<Skill>()
+        set(value) {
+            field = value
+            this@SkillsAdapter.notifyDataSetChanged()
+        }
+
+        override fun onBindViewHolder(holder: Holder?, position: Int) {
+            holder?.bind(data[position])
+        }
+
+        override fun getItemCount() = data.size
+
+        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): Holder {
+            return Holder(layoutInflater.inflate(R.layout.adapter_skill, parent, false),
+                    listener)
+        }
+    }
+
+    inner class Holder(itemView: android.view.View?, click: (skill: Skill) -> Unit)
+        : RecyclerView.ViewHolder(itemView) {
+        lateinit var skill: Skill
+
+        init {
+            itemView?.onClick { click.invoke(skill) }
+        }
+
+        fun bind(skill: Skill) {
+            this.skill = skill
+            if (itemView != null) {
+                (itemView as TextView).text = skill.name
+            }
         }
     }
 }

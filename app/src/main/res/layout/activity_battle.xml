@@ -167,6 +167,15 @@
 
     </LinearLayout>
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/skills"
+        android:layout_width="180dp"
+        android:layout_height="200dp"
+        android:background="@drawable/bg_window"
+        android:layout_marginLeft="8dp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_above="@+id/commands"/>
 
     <LinearLayout
         android:id="@+id/commands"
@@ -231,6 +240,7 @@
         android:padding="12dp"
         android:textColor="#FFFFFF"
         android:visibility="gone"
+        android:foreground="?selectableItemBackgroundBorderless"
         tools:text="Vahn attacks the Slime! 6 points of damage!"/>
 
 </RelativeLayout>
