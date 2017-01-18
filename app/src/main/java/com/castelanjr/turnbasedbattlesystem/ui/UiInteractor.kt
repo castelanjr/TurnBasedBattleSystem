@@ -56,19 +56,17 @@ class UiInteractor(val view: View) {
     }
 
     private fun renderSkill(command: SkillCommand) {
-        with(command) {
-            view.renderSkill(actor, target, successful, damage)
-            setupView(engine.entities)
-            view.showMessage(message(), { engine.commandExecuted() })
+        if (command.successful) {
+            view.renderSkill(command)
         }
+        setupView(engine.entities)
+        view.showMessage(command.message(), { engine.commandExecuted() })
     }
 
     private fun renderAttack(command: AttackCommand) {
-        with(command) {
-            view.renderAttack(actor, target, successful, damage)
-            setupView(engine.entities)
-            view.showMessage(message(), { engine.commandExecuted() })
-        }
+        view.renderAttack(command)
+        setupView(engine.entities)
+        view.showMessage(command.message(), { engine.commandExecuted() })
     }
 
     private fun checkIfRanAway(command: RunCommand) {
@@ -92,8 +90,12 @@ class UiInteractor(val view: View) {
     }
 
     fun onSkillSelected(actor: Character) {
-        view.showMessage("Select a skill")
-        view.showSkills(actor.skills)
+        if (!actor.skills.isEmpty()) {
+            view.showMessage("Select a skill")
+            view.showSkills(actor.skills)
+        } else {
+            view.showMessage("${actor.name} knows no skills")
+        }
     }
 
     fun onRunSelected() {

@@ -1,6 +1,9 @@
 package com.castelanjr.turnbasedbattlesystem.ui
 
+import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
+import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.SoundPool
@@ -9,8 +12,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -19,6 +21,8 @@ import com.castelanjr.turnbasedbattlesystem.char.Character
 import com.castelanjr.turnbasedbattlesystem.char.Skill
 import com.castelanjr.turnbasedbattlesystem.command.*
 import kotlinx.android.synthetic.main.activity_battle.*
+import org.jetbrains.anko.backgroundColor
+import org.jetbrains.anko.backgroundDrawable
 import org.jetbrains.anko.onClick
 
 class BattleActivity : AppCompatActivity(), View {
@@ -32,7 +36,9 @@ class BattleActivity : AppCompatActivity(), View {
     var commandType: String? = null
     var currentCommandSkill: Skill? = null
 
-    val soundIds = mutableListOf<Int>()
+    var clickSound = 0
+    var attackSound = 0
+    var skillSound = 0
 
     lateinit var adapter: SkillsAdapter
 
@@ -43,25 +49,25 @@ class BattleActivity : AppCompatActivity(), View {
         attack.onClick {
             commandType = "attack"
             presenter.onAttackSelected()
-            sp?.play(soundIds[1], 1f, 1f, 1, 0, 1f)
+            playClick()
         }
 
         defend.onClick {
             commandType = "defend"
             presenter.onDefendSelected()
-            sp?.play(soundIds[1], 1f, 1f, 1, 0, 1f)
+            playClick()
         }
 
         skill.onClick {
             commandType = "skill"
             currentCommandActor?.let { it1 -> presenter.onSkillSelected(it1) }
-            sp?.play(soundIds[1], 1f, 1f, 1, 0, 1f)
+            playClick()
         }
 
         run.onClick {
             commandType = "run"
             presenter.onRunSelected()
-            sp?.play(soundIds[1], 1f, 1f, 1, 0, 1f)
+            playClick()
         }
 
         val attrs = AudioAttributes.Builder()
@@ -76,17 +82,12 @@ class BattleActivity : AppCompatActivity(), View {
 
         volumeControlStream = AudioManager.STREAM_MUSIC
 
-        val sound = sp?.load(this, R.raw.hit23, 1)
-        if (sound != null) {
-            soundIds.add(sound)
-        }
-        val click = sp?.load(this, R.raw.click, 1)
-        if (click != null) {
-            soundIds.add(click)
-        }
+        attackSound = sp?.load(this, R.raw.hit23, 1) as Int
+        clickSound = sp?.load(this, R.raw.click, 1) as Int
+        skillSound = sp?.load(this, R.raw.zap2, 1) as Int
 
         adapter = SkillsAdapter {
-            sp?.play(soundIds[1], 1f, 1f, 1, 0, 1f)
+            playClick()
             currentCommandSkill = it
             presenter.onSkillSelected(it)
         }
@@ -106,7 +107,7 @@ class BattleActivity : AppCompatActivity(), View {
         message.visibility = VISIBLE
         message.text = text
         message.onClick {
-            sp?.play(soundIds[1], 1f, 1f, 1, 0, 1f)
+            playClick()
             if (action == null) {
                 message.visibility = GONE
             } else {
@@ -127,22 +128,41 @@ class BattleActivity : AppCompatActivity(), View {
     override fun pickTarget() {
         listOf(enemy1, enemy2, enemy3, hero1, hero2, hero3)
                 .forEach { it.onClick {
-                    sp?.play(soundIds[1], 1f, 1f, 1, 0, 1f)
+                    playClick()
                     currentCommandTarget = it?.tag as Character
                     currentCommandTarget?.let { presenter.onTargetSelected(it) }
                 } }
     }
 
-    override fun renderAttack(actor: Character, target: Character, successful: Boolean, damage: Int) {
-        sp?.play(soundIds[0], 1f, 1f, 1, 0, 1f)
+    override fun renderAttack(attack: AttackCommand) {
+        playAttack()
         ObjectAnimator
-                .ofFloat(charactersMap[target], "translationX", 0f, 25f, -25f, 25f, -25f,15f, -15f, 6f, -6f, 0f)
+                .ofFloat(charactersMap[attack.target], "translationX", 0f, 25f, -25f, 25f, -25f,15f, -15f, 6f, -6f, 0f)
                 .setDuration(500L)
                 .start()
     }
 
-    override fun renderSkill(actor: Character, target: Character, successful: Boolean, damage: Int) {
-
+    override fun renderSkill(skill: SkillCommand) {
+        playSkill()
+        val view = charactersMap[skill.target]
+        val bg = view?.backgroundDrawable
+        val animator = ValueAnimator.ofObject(ArgbEvaluator(), Color.TRANSPARENT, skill.skill.colorAnimation)
+        animator.duration = 250
+        animator.addUpdateListener {
+            if (view is ImageView) {
+                view.setColorFilter(animator.animatedValue as Int)
+            } else {
+                view?.backgroundColor = animator.animatedValue as Int
+            }
+        }
+        animator.start()
+        view?.postDelayed({
+            if (view is ImageView) {
+                view.clearColorFilter()
+            } else {
+                view.backgroundDrawable = bg
+            }
+        }, 300)
     }
 
     override fun finalize() {
@@ -219,7 +239,7 @@ class BattleActivity : AppCompatActivity(), View {
         imageView.setImageResource(sprite)
         imageView.tag = enemy
         if (enemy.isDead()) {
-            imageView.visibility = GONE
+            imageView.visibility = INVISIBLE
         }
         charactersMap.put(enemy, imageView)
     }
@@ -231,6 +251,18 @@ class BattleActivity : AppCompatActivity(), View {
             2 -> hero3
             else -> throw IllegalArgumentException("Invalid index")
         }
+    }
+
+    private fun playClick() {
+        sp?.play(clickSound, 1f, 1f, 1, 0, 1f)
+    }
+
+    private fun playAttack() {
+        sp?.play(attackSound, 1f, 1f, 1, 0, 1f)
+    }
+
+    private fun playSkill() {
+        sp?.play(skillSound, 1f, 1f, 1, 0, 1f)
     }
 
     inner class SkillsAdapter(val listener: (skill: Skill) -> Unit): RecyclerView.Adapter<Holder>() {

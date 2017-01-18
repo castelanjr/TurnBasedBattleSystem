@@ -7,6 +7,7 @@ class SkillCommand(actor: Character, val skill: Skill, target: Character): Comma
 
     override fun execute() {
         skill.execute(actor, target)
+        successful = skill.success
     }
 
     override fun message(): String {
