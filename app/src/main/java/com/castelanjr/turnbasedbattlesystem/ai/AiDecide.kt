@@ -22,9 +22,13 @@ object AiDecide {
                 return AttackCommand(actor, entities[random.nextInt(entities.size)])
             }
         } else {
-            if (actor.hasSkills() && random.nextBoolean() && actor.mp == actor.maxMP) {
-                return SkillCommand(actor, actor.skills[random.nextInt(actor.skills.size)],
-                        entities[random.nextInt(entities.size)])
+            val randomSkill = if (actor.hasSkills()) {
+                    actor.skills[random.nextInt(actor.skills.size)]
+                } else {
+                    null
+                }
+            if (randomSkill != null && actor.mp >= randomSkill.cost) {
+                return SkillCommand(actor, randomSkill, entities[random.nextInt(entities.size)])
             } else {
                 return AttackCommand(actor, entities[random.nextInt(entities.size)])
             }

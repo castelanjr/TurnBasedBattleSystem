@@ -16,7 +16,7 @@ class Character(val name: String, val sprite: Int,
 
     fun isDead() = hp <= 0
 
-    fun hpPercentage() = (hp / maxHP) * 100
+    fun hpPercentage() = Math.round((hp.toDouble() / maxHP.toDouble()) * 100)
 
     fun hasSkills() = !skills.isEmpty()
 }
