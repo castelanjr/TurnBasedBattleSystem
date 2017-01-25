@@ -176,19 +176,22 @@
         android:visibility="gone"
         tools:visibility="visible"
         android:orientation="vertical"
+        android:layout_marginBottom="4dp"
         android:layout_above="@+id/commands">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview"
             android:layout_width="180dp"
-            android:layout_height="180dp"/>
+            android:layout_height="180dp"
+            android:clipToPadding="false"
+            android:padding="4dp"/>
 
         <Button
             android:id="@+id/cancel_skill"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/cancel"
-            android:layout_margin="2dp"/>
+            android:layout_margin="4dp"
+            android:text="@string/cancel"/>
 
     </LinearLayout>
 
@@ -212,14 +215,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Attack"/>
+                android:text="@string/attack"/>
 
             <Button
                 android:id="@+id/defend"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Defend"/>
+                android:text="@string/defend"/>
 
         </LinearLayout>
 
@@ -233,14 +236,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Skill"/>
+                android:text="@string/skill"/>
 
             <Button
                 android:id="@+id/run"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Run"/>
+                android:text="@string/run"/>
 
         </LinearLayout>
 

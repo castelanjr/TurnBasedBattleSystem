@@ -1,11 +1,11 @@
 package com.castelanjr.turnbasedbattlesystem.ui
 
-import com.castelanjr.turnbasedbattlesystem.entities.Character
-import com.castelanjr.turnbasedbattlesystem.entities.skills.Skill
 import com.castelanjr.turnbasedbattlesystem.command.*
 import com.castelanjr.turnbasedbattlesystem.core.DataLoader
 import com.castelanjr.turnbasedbattlesystem.core.Engine
 import com.castelanjr.turnbasedbattlesystem.core.Result
+import com.castelanjr.turnbasedbattlesystem.entities.Character
+import com.castelanjr.turnbasedbattlesystem.entities.skills.Skill
 
 class UiInteractor(val view: View) {
 
@@ -80,7 +80,7 @@ class UiInteractor(val view: View) {
     }
 
     fun onAttackSelected() {
-        view.showMessage("Pick a target")
+        view.showMessage("Pick a target", block = true)
         view.pickTarget()
     }
 
@@ -91,7 +91,7 @@ class UiInteractor(val view: View) {
 
     fun onSkillSelected(actor: Character) {
         if (!actor.skills.isEmpty()) {
-            view.showMessage("Select a skill")
+            view.showMessage("Select a skill", block = true)
             view.showSkills(actor.skills)
         } else {
             view.showMessage("${actor.name} knows no skills")
@@ -104,6 +104,7 @@ class UiInteractor(val view: View) {
     }
 
     fun onTargetSelected(target: Character) {
+        view.disableTargets()
         view.showMessage("Target: ${target.name}")
         engine.addNextCommand(view.command())
     }

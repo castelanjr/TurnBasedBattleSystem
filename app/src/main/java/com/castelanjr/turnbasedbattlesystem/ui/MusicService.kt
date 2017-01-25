@@ -14,6 +14,7 @@ class MusicService: Service(), MediaPlayer.OnErrorListener {
 
     val binder : IBinder = ServiceBinder()
     var player: MediaPlayer? = null
+    var position = 0
 
     override fun onBind(intent: Intent?) = binder
 
@@ -42,6 +43,20 @@ class MusicService: Service(), MediaPlayer.OnErrorListener {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int) = START_STICKY
+
+    fun pause() {
+        position = player?.currentPosition ?: 0
+        player?.pause()
+    }
+
+    fun resume() {
+        player?.let {
+            if (!it.isPlaying) {
+                it.seekTo(position)
+                it.start()
+            }
+        }
+    }
 
     fun stop() {
         try {

@@ -1,14 +1,14 @@
 package com.castelanjr.turnbasedbattlesystem.ui
 
-import com.castelanjr.turnbasedbattlesystem.entities.Character
-import com.castelanjr.turnbasedbattlesystem.entities.skills.Skill
 import com.castelanjr.turnbasedbattlesystem.command.AttackCommand
 import com.castelanjr.turnbasedbattlesystem.command.Command
 import com.castelanjr.turnbasedbattlesystem.command.SkillCommand
+import com.castelanjr.turnbasedbattlesystem.entities.Character
+import com.castelanjr.turnbasedbattlesystem.entities.skills.Skill
 
 interface View {
 
-    fun showMessage(text: String, action: (() -> Unit?)? = null)
+    fun showMessage(text: String, action: (() -> Unit?)? = null, block: Boolean = false)
 
     fun setCurrentActor(actor: Character?)
 
@@ -37,5 +37,7 @@ interface View {
     fun showSkills(skillList: Array<Skill>)
 
     fun dismissSkills()
+
+    fun disableTargets()
 
 }

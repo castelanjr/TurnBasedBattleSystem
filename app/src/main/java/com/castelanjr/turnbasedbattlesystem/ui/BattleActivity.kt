@@ -1,5 +1,6 @@
 package com.castelanjr.turnbasedbattlesystem.ui
 
+import android.animation.Animator
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
@@ -20,8 +21,8 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View.*
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
-import android.widget.TextView
 import com.castelanjr.turnbasedbattlesystem.R
 import com.castelanjr.turnbasedbattlesystem.command.*
 import com.castelanjr.turnbasedbattlesystem.entities.Character
@@ -49,7 +50,6 @@ class BattleActivity : AppCompatActivity(), View {
     var bound = false
     var service: MusicService? = null
     var musicConnection = Connection()
-
 
     lateinit var adapter: SkillsAdapter
 
@@ -118,16 +118,29 @@ class BattleActivity : AppCompatActivity(), View {
         presenter.initialize()
     }
 
+    override fun onPause() {
+        super.onPause()
+        service?.pause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        service?.resume()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         sp?.release()
         doUnbindService()
     }
 
-    override fun showMessage(text: String, action: (() -> Unit?)?) {
+    override fun showMessage(text: String, action: (() -> Unit?)?, block: Boolean) {
         message.visibility = VISIBLE
         message.text = text
         message.onClick {
+            if (block) {
+                return@onClick
+            }
             playClick()
             if (action == null) {
                 message.visibility = GONE
@@ -155,15 +168,47 @@ class BattleActivity : AppCompatActivity(), View {
                 } }
     }
 
+    override fun disableTargets() {
+        listOf(enemy1, enemy2, enemy3, hero1, hero2, hero3)
+                .forEach { it.setOnClickListener(null) }
+    }
+
     override fun renderAttack(attack: AttackCommand) {
+        if (!attack.successful) {
+            return
+        }
         playAttack()
-        ObjectAnimator
+        val animator = ObjectAnimator
                 .ofFloat(charactersMap[attack.target], "translationX", 0f, 25f, -25f, 25f, -25f,15f, -15f, 6f, -6f, 0f)
                 .setDuration(500L)
-                .start()
+
+        animator.addListener(object : Animator.AnimatorListener {
+            override fun onAnimationRepeat(animation: Animator?) {
+
+            }
+
+            override fun onAnimationEnd(animation: Animator?) {
+                if (attack.target.isDead()) {
+                    charactersMap[attack.target]?.animate()?.alpha(0f)?.setDuration(100L)?.start()
+                }
+            }
+
+            override fun onAnimationCancel(animation: Animator?) {
+
+            }
+
+            override fun onAnimationStart(animation: Animator?) {
+
+            }
+        })
+
+        animator.start()
     }
 
     override fun renderSkill(skill: SkillCommand) {
+        if (!skill.successful) {
+            return
+        }
         playSkill()
         val view = charactersMap[skill.target]
         val bg = view?.backgroundDrawable
@@ -318,7 +363,7 @@ class BattleActivity : AppCompatActivity(), View {
         fun bind(skill: Skill) {
             this.skill = skill
             if (itemView != null) {
-                (itemView as TextView).text = skill.name
+                (itemView as Button).text = skill.name
             }
         }
     }
