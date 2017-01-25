@@ -6,7 +6,7 @@ import java.util.*
 class AttackCommand(actor: Character, target: Character): Command(actor, target) {
 
     override fun execute() {
-        val chance = 100 + (actor.accuracy - target.speed)
+        val chance = 95 + (actor.accuracy - target.speed)
         val hit = Random().nextInt(100)
         successful = chance > hit
 
