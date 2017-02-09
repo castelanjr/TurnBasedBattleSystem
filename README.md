@@ -6,12 +6,14 @@ A Dragon Quest-like turn based battle system made in Kotlin (Android), for, uhhh
  command is a little broken because you can select it for every playable character, so you're almost
  guaranteed to run away from the battle if you wish so.
 
+ ![Commands](art/commands.png)  ![Result](art/result.png)
+
 ## About the code
 I tried to separate the code in modules to make them as reusable as possible. There is an `Engine`
 that controls the battle flow - selecting commands, executing, checking if the battle is over -
 by executing `Actions` like `SelectCommandsAction`, `ExecuteCommandsAction` and so on.
 It's built using a faux-MVP architecture. There is a `UiInteractor` that acts like a Presenter,
-that takes an object that implements the `View` interface and calls its methods when necessary.
+taking an object that implements the `View` interface and calling its methods when necessary.
 I made it this way so I could implement a different user interface if I wanted. A command line
 interface is, in theory, totally feasible using the current structure (removing the Android
 dependencies, of course). The final result relies way too much on callbacks, by right now it works.
