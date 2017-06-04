@@ -4,12 +4,11 @@ import com.castelanjr.turnbasedbattlesystem.action.CheckStatusAction
 import com.castelanjr.turnbasedbattlesystem.action.ExecuteCommandsAction
 import com.castelanjr.turnbasedbattlesystem.action.PrepareAction
 import com.castelanjr.turnbasedbattlesystem.action.SelectCommandAction
-import com.castelanjr.turnbasedbattlesystem.entities.Character
 import com.castelanjr.turnbasedbattlesystem.command.Command
+import com.castelanjr.turnbasedbattlesystem.entities.Character
 import com.castelanjr.turnbasedbattlesystem.ui.UiInteractor
 
 class Engine(val interactor: UiInteractor): Runnable {
-
     var entities: Array<Character> = emptyArray()
     val preparingAction = PrepareAction(this, interactor)
     val selectingCommandAction = SelectCommandAction(this, interactor, aliveEntities())

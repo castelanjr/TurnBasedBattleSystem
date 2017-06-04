@@ -33,25 +33,24 @@ import org.jetbrains.anko.backgroundDrawable
 import org.jetbrains.anko.onClick
 
 class BattleActivity : AppCompatActivity(), View {
+    private var charactersMap = mutableMapOf<Character, android.view.View>()
+    private val presenter = UiInteractor(this)
+    private var sp: SoundPool? = null
 
-    var charactersMap = mutableMapOf<Character, android.view.View>()
-    val presenter = UiInteractor(this)
-    var sp: SoundPool? = null
+    private var currentCommandActor: Character? = null
+    private var currentCommandTarget: Character? = null
+    private var commandType: String? = null
+    private var currentCommandSkill: Skill? = null
 
-    var currentCommandActor: Character? = null
-    var currentCommandTarget: Character? = null
-    var commandType: String? = null
-    var currentCommandSkill: Skill? = null
+    private var clickSound = 0
+    private var attackSound = 0
+    private var skillSound = 0
 
-    var clickSound = 0
-    var attackSound = 0
-    var skillSound = 0
+    private var bound = false
+    private var service: MusicService? = null
+    private var musicConnection = Connection()
 
-    var bound = false
-    var service: MusicService? = null
-    var musicConnection = Connection()
-
-    lateinit var adapter: SkillsAdapter
+    private lateinit var adapter: SkillsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +70,7 @@ class BattleActivity : AppCompatActivity(), View {
 
         skill.onClick {
             commandType = "skill"
-            currentCommandActor?.let { it1 -> presenter.onSkillSelected(it1) }
+            currentCommandActor?.let { actor -> presenter.onSkillSelected(actor) }
             playClick()
         }
 
@@ -111,9 +110,11 @@ class BattleActivity : AppCompatActivity(), View {
             currentCommandSkill = it
             presenter.onSkillSelected(it)
         }
-        recyclerview.layoutManager = LinearLayoutManager(this)
-        recyclerview.itemAnimator = DefaultItemAnimator()
-        recyclerview.adapter = adapter
+        with(recyclerview) {
+            this.layoutManager = LinearLayoutManager(this@BattleActivity)
+            this.adapter = this@BattleActivity.adapter
+            this.itemAnimator = DefaultItemAnimator()
+        }
 
         presenter.initialize()
     }
@@ -181,7 +182,6 @@ class BattleActivity : AppCompatActivity(), View {
         val animator = ObjectAnimator
                 .ofFloat(charactersMap[attack.target], "translationX", 0f, 25f, -25f, 25f, -25f,15f, -15f, 6f, -6f, 0f)
                 .setDuration(500L)
-
         animator.addListener(object : Animator.AnimatorListener {
             override fun onAnimationRepeat(animation: Animator?) {
 
@@ -201,7 +201,6 @@ class BattleActivity : AppCompatActivity(), View {
 
             }
         })
-
         animator.start()
     }
 
@@ -212,16 +211,17 @@ class BattleActivity : AppCompatActivity(), View {
         playSkill()
         val view = charactersMap[skill.target]
         val bg = view?.backgroundDrawable
-        val animator = ValueAnimator.ofObject(ArgbEvaluator(), Color.TRANSPARENT, skill.skill.colorAnimation)
-        animator.duration = 250
-        animator.addUpdateListener {
-            if (view is ImageView) {
-                view.setColorFilter(animator.animatedValue as Int)
-            } else {
-                view?.backgroundColor = animator.animatedValue as Int
+        ValueAnimator.ofObject(ArgbEvaluator(), Color.TRANSPARENT, skill.skill.colorAnimation)?.let { animator ->
+            animator.duration = 250
+            animator.addUpdateListener {
+                if (view is ImageView) {
+                    view.setColorFilter(animator.animatedValue as Int)
+                } else {
+                    view?.backgroundColor = animator.animatedValue as Int
+                }
             }
+            animator.start()
         }
-        animator.start()
         view?.postDelayed({
             if (view is ImageView) {
                 view.clearColorFilter()
@@ -231,9 +231,7 @@ class BattleActivity : AppCompatActivity(), View {
         }, 300)
     }
 
-    override fun finalize() {
-        finish()
-    }
+    override fun finalize() = finish()
 
     override fun command(): Command {
         return when (commandType) {
@@ -332,7 +330,6 @@ class BattleActivity : AppCompatActivity(), View {
     }
 
     class SkillsAdapter(val listener: (skill: Skill) -> Unit): RecyclerView.Adapter<Holder>() {
-
         var data = emptyArray<Skill>()
         set(value) {
             field = value
@@ -347,17 +344,16 @@ class BattleActivity : AppCompatActivity(), View {
 
         override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): Holder {
             return Holder(LayoutInflater.from(parent?.context)
-                    .inflate(R.layout.adapter_skill, parent, false),
-                    listener)
+                    .inflate(R.layout.adapter_skill, parent, false), listener)
         }
     }
 
     class Holder(itemView: android.view.View?, click: (skill: Skill) -> Unit)
         : RecyclerView.ViewHolder(itemView) {
-        lateinit var skill: Skill
+        private var skill: Skill? = null
 
         init {
-            itemView?.onClick { click.invoke(skill) }
+            itemView?.onClick { skill?.let { click(it) }}
         }
 
         fun bind(skill: Skill) {

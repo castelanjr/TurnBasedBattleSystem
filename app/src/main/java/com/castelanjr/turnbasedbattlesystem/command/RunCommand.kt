@@ -9,11 +9,9 @@ class RunCommand(actor: Character) : Command(actor, actor) {
         successful = Random().nextBoolean()
     }
 
-    override fun message(): String {
-        return if (successful) {
-            "Ran away from the enemies!"
-        } else {
-            "Couldn't run away..."
-        }
+    override fun message() = if (successful) {
+        "Ran away from the enemies!"
+    } else {
+        "Couldn't run away..."
     }
 }

@@ -10,11 +10,9 @@ class Fire: Skill("Fire", 8, 20, Color.RED) {
         target.hp -= result
     }
 
-    override fun message(): String {
-        return if (success) {
-            " It dealt $result damage"
-        } else {
-            " Not enough mp..."
-        }
+    override fun message() = if (success) {
+        " It dealt $result damage"
+    } else {
+        " Not enough mp..."
     }
 }

@@ -11,18 +11,15 @@ import com.castelanjr.turnbasedbattlesystem.R
 import java.io.IOException
 
 class MusicService: Service(), MediaPlayer.OnErrorListener {
-
-    val binder : IBinder = ServiceBinder()
-    var player: MediaPlayer? = null
-    var position = 0
+    private val binder : IBinder = ServiceBinder()
+    private var player: MediaPlayer? = null
+    private var position = 0
 
     override fun onBind(intent: Intent?) = binder
 
     override fun onCreate() {
         super.onCreate()
-
         val file: AssetFileDescriptor = resources.openRawResourceFd(R.raw.battle)
-
         player = MediaPlayer()
         try {
             player?.let {
@@ -60,8 +57,10 @@ class MusicService: Service(), MediaPlayer.OnErrorListener {
 
     fun stop() {
         try {
-            player?.stop()
-            player?.release()
+            player?.let {
+                it.stop()
+                it.release()
+            }
         } finally {
             player = null
         }

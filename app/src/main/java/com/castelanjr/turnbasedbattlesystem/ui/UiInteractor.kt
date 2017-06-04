@@ -12,29 +12,21 @@ class UiInteractor(val view: View) {
     val engine = Engine(this)
 
     fun initialize() {
-
         val entities = DataLoader.entities()
         engine.entities = entities
-
         setupView(entities)
-
         engine.run()
-
     }
 
     fun setupView(entities: Array<Character>) {
-        val heroes = entities.filter { it.isPlayer }.toList()
-        for (hero in heroes) {
-            val index = heroes.indexOf(hero)
+        entities.filter { it.isPlayer }.toList().forEachIndexed { index, hero ->
             view.bindHero(index, hero)
             view.showHeroName(index, hero.name)
             view.showHeroHp(index, "HP: ${Math.max(hero.hp, 0)}")
             view.showHeroMp(index, "MP: ${Math.max(hero.mp, 0)}")
         }
 
-        val enemies = entities.filter { !it.isPlayer }.toList()
-        for (enemy in enemies) {
-            val index = enemies.indexOf(enemy)
+        entities.filter { !it.isPlayer }.toList().forEachIndexed { index, enemy ->
             view.showEnemy(index, enemy, enemy.sprite)
         }
     }
@@ -42,11 +34,8 @@ class UiInteractor(val view: View) {
     fun renderCommand(command: Command) {
         when (command) {
             is AttackCommand -> renderAttack(command)
-
             is SkillCommand -> renderSkill(command)
-
             is RunCommand -> checkIfRanAway(command)
-
             is DefendCommand -> renderDefend(command)
         }
     }

@@ -15,11 +15,11 @@ object AiDecide {
         val hp = actor.hpPercentage()
         if (hp > 50) {
             return AttackCommand(actor, entities[random.nextInt(entities.size)])
-        } else if (hp < 50 && hp > 25) {
-            if (random.nextBoolean()) {
-                return DefendCommand(actor)
+        } else if (hp in 26..49) {
+            return if (random.nextBoolean()) {
+                 DefendCommand(actor)
             } else {
-                return AttackCommand(actor, entities[random.nextInt(entities.size)])
+                AttackCommand(actor, entities[random.nextInt(entities.size)])
             }
         } else {
             val randomSkill = if (actor.hasSkills()) {
@@ -27,10 +27,10 @@ object AiDecide {
                 } else {
                     null
                 }
-            if (randomSkill != null && actor.mp >= randomSkill.cost) {
-                return SkillCommand(actor, randomSkill, entities[random.nextInt(entities.size)])
+            return if (randomSkill != null && actor.mp >= randomSkill.cost) {
+                 SkillCommand(actor, randomSkill, entities[random.nextInt(entities.size)])
             } else {
-                return AttackCommand(actor, entities[random.nextInt(entities.size)])
+                AttackCommand(actor, entities[random.nextInt(entities.size)])
             }
         }
     }
